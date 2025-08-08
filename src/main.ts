@@ -2,16 +2,15 @@ import './assets/main.css'
 import 'uno.css'
 
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { pinia } from '@/stores/pinia'
 
 import App from './App.vue'
 import router from './router'
 import { useAppStore } from './stores/app'
 import { useUserStore } from './stores/user'
+// 使用 vite-plugin-mock，移除自定义 fetch mock
 
 const app = createApp(App)
-const pinia = createPinia()
-
 app.use(pinia)
 app.use(router)
 

@@ -1,5 +1,8 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useQuestionnaireStore } from '@/stores/questionnaire'
+import { pinia } from '@/stores/pinia'
 
 // 定义路由类型
 const routes: RouteRecordRaw[] = [
@@ -11,6 +14,30 @@ const routes: RouteRecordRaw[] = [
       title: '首页',
       requiresAuth: false,
     },
+  },
+  {
+    path: '/passcode',
+    name: 'passcode',
+    component: () => import('../views/PasscodeView.vue'),
+    meta: { title: '问卷入口', requiresAuth: false },
+  },
+  {
+    path: '/identity',
+    name: 'identity',
+    component: () => import('../views/IdentityView.vue'),
+    meta: { title: '身份校验', requiresAuth: false },
+  },
+  {
+    path: '/quiz',
+    name: 'quiz',
+    component: () => import('../views/QuizView.vue'),
+    meta: { title: '问卷答题', requiresAuth: false },
+  },
+  {
+    path: '/result',
+    name: 'result',
+    component: () => import('../views/ResultView.vue'),
+    meta: { title: '已答完', requiresAuth: false },
   },
   {
     path: '/about',
@@ -51,6 +78,20 @@ router.beforeEach((to, from, next) => {
   // if (to.meta?.requiresAuth) {
   //   // 检查用户是否已登录
   // }
+
+  // 问卷流程路由守卫
+  // 确保与 main.ts 同一个 pinia 实例
+  const qn = useQuestionnaireStore(pinia)
+  const needSession = ['identity', 'quiz', 'result']
+  if (needSession.includes(to.name as string)) {
+    // 防止绕过首页
+    if (!qn.questionnaire) {
+      return next({ name: 'passcode' })
+    }
+  }
+  if (to.name === 'quiz' && !qn.sessionId) {
+    return next({ name: 'identity' })
+  }
 
   next()
 })
