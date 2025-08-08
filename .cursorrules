@@ -1,0 +1,123 @@
+# Vue 3 H5 移动端项目开发规范
+
+## 项目概述
+这是一个基于 Vue 3 + TypeScript 的移动优先 H5 应用，具备 PWA 功能，使用现代工具链和移动端优化架构。
+
+## 开发环境
+- 使用 `pnpm` 作为包管理器
+- Node.js 版本要求：^20.19.0 || >=22.12.0
+- 开发服务器端口：3000
+
+## 核心技术栈
+- **框架**: Vue 3 + TypeScript + Vite
+- **状态管理**: Pinia（带持久化）
+- **路由**: Vue Router 4
+- **样式**: UnoCSS（原子化 CSS）
+- **HTTP 请求**: @vueuse/core
+- **测试**: Vitest + Vue Test Utils
+- **PWA**: Service Worker + Manifest
+
+## 编码规范
+
+### Vue 组件
+- 统一使用 `<script setup lang="ts">` Composition API
+- 组件文件名使用 PascalCase（如 `HelloWorld.vue`）
+- 基础组件放在 `src/components/base/` 目录
+- 图标组件放在 `src/components/icons/` 目录
+
+### TypeScript
+- 严格类型检查，使用多个 tsconfig 配置文件
+- 接口定义使用 `interface` 关键字
+- Store 中的状态需要明确类型注解
+
+### 样式规范
+- 优先使用 UnoCSS 原子类
+- 移动端优先的响应式设计
+- 使用预定义的快捷类：
+  - `flex-center`: 居中布局
+  - `btn-primary`: 主要按钮样式
+  - `card`: 卡片样式
+  - `touch-action`: 移动端触摸优化
+- 安全区域适配：`safe-area-top`、`safe-area-bottom`
+
+### 移动端适配
+- 所有组件需考虑移动端体验
+- 使用 App Store 中的设备检测：`isIOS`、`isAndroid`、`isMobile`
+- 触摸友好的交互设计
+- 支持安全区域（刘海屏适配）
+
+### 状态管理（Pinia）
+- Store 使用 Composition API 风格
+- 关键状态需要持久化到 localStorage
+- Store 文件命名：`use[Name]Store`
+- 导出格式：`export const useUserStore = defineStore(...)`
+
+### API 请求
+- 统一使用 `useApi` composable
+- 自动处理 JWT token 注入
+- 统一错误处理和超时配置
+- 支持请求/响应拦截器
+
+### 目录结构规范
+```
+src/
+├── components/        # 可复用组件
+│   ├── base/         # 基础组件
+│   ├── icons/        # 图标组件
+│   └── __tests__/    # 组件测试
+├── composables/      # 组合式函数
+├── stores/           # Pinia 状态管理
+├── views/            # 页面组件
+├── router/           # 路由配置
+└── assets/           # 静态资源
+```
+
+### 命名约定
+- 文件名：kebab-case（如 `user-profile.vue`）
+- 变量/函数：camelCase
+- 常量：UPPER_SNAKE_CASE
+- 类型/接口：PascalCase
+- CSS 类名：遵循 UnoCSS 规范
+
+## 开发实践
+
+### 组件开发
+- 每个组件应该有明确的职责
+- 使用 TypeScript 进行 props 类型定义
+- 合理使用 Vue 3 的 Composition API
+- 移动端交互优化（触摸反馈、滚动性能）
+
+### 性能优化
+- 路由懒加载（`component: () => import(...)`）
+- 手动代码分割配置（vendor、utils chunks）
+- 图片资源优化
+- PWA 离线缓存策略
+
+### 测试
+- 使用 Vitest 进行单元测试
+- 组件测试放在 `__tests__` 目录
+- 测试文件命名：`*.spec.ts`
+
+### PWA 功能
+- 使用 `usePWA` composable 处理安装
+- 配置 manifest.json 支持移动端安装
+- Service Worker 处理离线功能
+
+## 环境变量
+- `VITE_API_BASE_URL`: API 基础地址
+- `VITE_API_TIMEOUT`: 请求超时时间
+- `VITE_ENABLE_PWA`: PWA 功能开关
+
+## 构建部署
+- 生产构建前必须通过类型检查
+- 使用 `pnpm build` 进行完整构建
+- PWA 构建使用 `pnpm build:pwa`
+- 代码必须通过 ESLint 检查
+
+## 注意事项
+- 所有新功能都要考虑移动端适配
+- 网络状态变化需要合理处理（App Store 提供 networkStatus）
+- 主题切换功能已集成（light/dark mode）
+- 安全区域适配是必须的
+- API 请求统一错误处理
+- 用户认证状态持久化
